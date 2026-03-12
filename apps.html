@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Guitar Tuner App</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <style>
+        body {
+            margin: 0;
+            background: #0f0f0f;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .header { margin-bottom: 30px; text-align: center; }
+        .header h1 { color: #f1c40f; margin: 0; font-size: 1.5rem; }
+        .header p { color: #888; font-size: 0.8rem; }
+
+        .tuner-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .note-btn {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid #333;
+            background: radial-gradient(#222, #111);
+            color: white;
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(241, 196, 15, 0.1);
+            transition: 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .note-btn:active {
+            transform: scale(0.9);
+            border-color: #f1c40f;
+            box-shadow: 0 0 30px rgba(241, 196, 15, 0.4);
+        }
+
+        .footer { position: absolute; bottom: 30px; color: #444; font-size: 0.7rem; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>GUITAR TUNER</h1>
+        <p>Tap a note to play sound</p>
+    </div>
+
+    <div class="tuner-grid">
+        <button class="note-btn" onclick="playTone(329.63)">E</button>
+        <button class="note-btn" onclick="playTone(246.94)">B</button>
+        <button class="note-btn" onclick="playTone(196.00)">G</button>
+        <button class="note-btn" onclick="playTone(146.83)">D</button>
+        <button class="note-btn" onclick="playTone(110.00)">A</button>
+        <button class="note-btn" onclick="playTone(82.41)">E</button>
+    </div>
+
+    <div class="footer">Created by Yong • 2024</div>
+
+    <script>
+        // Mesin Penghasil Suara (Sintesis Audio)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playTone(freq) {
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            oscillator.type = 'triangle'; // Suara lembut kayak gitar
+            oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            
+            gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.5);
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 1.5);
+        }
+    </script>
+</body>
+</html>
